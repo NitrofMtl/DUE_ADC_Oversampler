@@ -179,6 +179,9 @@ const int8_t ADC_OS_class::analogPinToChannelPos(int8_t pin) const
 		case 9:  pin = 0xb; break;
 		case 10: pin = 0xc; break;
 		case 11: pin = 0xd; break;
+		case 12: pin = 8; break;
+		case 13: pin = 9; break;
+		case 14: pin = PIN52_Pos; break;
 		case INTERNAL_TEMP: pin = INTERNAL_TEMP; break;
 		case 20: pin = 8; break;
 		case 21: pin = 9; break;		
