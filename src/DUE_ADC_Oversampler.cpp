@@ -43,14 +43,7 @@ const uint32_t ADC_OS_class::OS_TimerCounter(double sampleFrequency) const
 
 const uint8_t ADC_OS_class::OS_GetNumSamplesPerConversion(ADC_OS_Resolution addedBits) const
 {
-	switch (addedBits) {
-		case ADC_OS_12BITS: return pow(4, 0)-1;//-1 because 0 count
-		case ADC_OS_13BITS: return pow(4, 1)-1;
-		case ADC_OS_14BITS: return pow(4, 2)-1;
-		case ADC_OS_15BITS: return pow(4, 3)-1;
-		case ADC_OS_16BITS: return pow(4, 4)-1;
-	}
-	return 0;
+	return (1 << (2 * addedBits )) -1;
 }
 
 void ADC_OS_class::ADC_init(uint32_t trigSel)
@@ -145,21 +138,25 @@ void ADC_OS_class::start()
 
 void ADC_OS_class::ADC_Handler() {     // for the ATOD: re-initialize DMA pointers and count	
 	//   read the interrupt status register 
-	if (ADC->ADC_ISR & ADC_ISR_ENDRX); /// check the bit "endrx"  in the status register
+	if ((ADC->ADC_ISR & ADC_ISR_ENDRX) == 0) return;
+	
+	volatile uint32_t* sum = dataSum;
+	volatile uint16_t* dmaB = dmaBuffer;
 
 	for ( uint16_t i = 0; i < numChannels; i++ ) { //add dma result into adder
-		dataSum[i] += dmaBuffer[i];
+		sum[i] += dmaB[i];
 	}
 	
-	ADC->ADC_RNCR = numChannels;  // "receive next" counter
+	ADC->ADC_RNCR = numChannels;  // reset "receive next" counter
 
-	if ( count < ( OS_NumSamplesPerConversion ) ) { //return when oversampling not complete
-		count++;
+	if ( ++count != ( OS_NumSamplesPerConversion ) ) { //return when oversampling not complete
 		return;
 	}
-	for ( uint16_t i = 0; i <= numChannels; i++ ) { //shift added data to result
-		result[i] = dataSum[i] >> OS_Res;
-		dataSum[i] = 0;
+	
+	volatile uint16_t* rt = result;
+	for ( uint16_t i = 0; i < numChannels; i++ ) { //shift added data to result
+		rt[i] = sum[i] >> OS_Res;
+		sum[i] = 0;
 	}
 	count = 0;	
 }

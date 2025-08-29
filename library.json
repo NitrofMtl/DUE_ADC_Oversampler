@@ -1,0 +1,31 @@
+{
+  "name": "DUE_ADC_Oversampler",
+  "version": "1.0.2",
+  "description": "16 Bits ADC oversampler with PDC on SAM3x DUE",
+  "keywords": [
+    "adc",
+    "oversampling",
+    "pdc",
+    "sam3x",
+    "arduino-due"
+  ],
+  "authors": [
+    {
+      "name": "Nitrof",
+      "url": "https://github.com/NitrofMtl",
+      "maintainer": true
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NitrofMtl/DUE_ADC_Oversampler.git"
+  },
+  "homepage": "https://github.com/NitrofMtl/DUE_ADC_Oversampler",
+  "license": "LGPL-2.1",
+  "frameworks": "arduino",
+  "platforms": [
+    "atmelsam"
+  ],
+  "includes": "DUE_ADC_Oversampler.h",
+  "examples": "examples/*/*.ino"
+}
